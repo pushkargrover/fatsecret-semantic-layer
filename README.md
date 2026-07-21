@@ -50,7 +50,7 @@ freezes the governed mart to the app's Parquet. The demo runs on ~20 foods pulle
 FatSecret API (recorded in `pipeline/ingest/ingest_manifest.csv`). See
 [docs/PROJECT.md](docs/PROJECT.md) for the full picture.
 
-### Run the app (deterministic core — no API key)
+### Run the app 
 
 ```bash
 cd app
@@ -62,7 +62,7 @@ npm run dev         # http://localhost:3000
 npm run eval        # live LLM constraint proof (needs an LLM key)
 ```
 
-The provider is swappable; **OpenAI is the default**. In `app/.env.local`:
+The provider is swappable; **OpenAI is the default**. 
 
 ```
 LLM_PROVIDER=openai
@@ -75,7 +75,7 @@ The frozen mart (`app/data/mart_food_metrics.parquet`) is committed, so the app 
 pipeline. The deterministic suite runs offline — only `npm run eval` and the live question flow
 need an API key, because the key is used **solely for metric selection**, never for data access.
 
-### Run the data pipeline (dbt on DuckDB — no credentials)
+### Run the data pipeline (dbt on DuckDB)
 
 ```bash
 cd pipeline && python -m venv .venv && .venv/Scripts/pip install -r requirements.txt
@@ -89,4 +89,4 @@ See [pipeline/README.md](pipeline/README.md) for live FatSecret ingest and the S
 
 _Independent demo built on the public FatSecret Platform API. Not affiliated with or endorsed
 by FatSecret. Only a small slice (~20 foods) pulled from the API is cached, in line with the
-API terms; raw pulls are gitignored and never redistributed._
+API terms; raw pulls are gitignored and never redistributed.
