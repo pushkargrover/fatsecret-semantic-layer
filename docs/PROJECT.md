@@ -162,7 +162,7 @@ cd .. && .venv/Scripts/python freeze/export_parquet.py
   Snowflake target configured (same models), not yet run.
 - **Phase 3 — semantic layer: COMPLETE** (Phase 0). **Phase 4 — LLM boundary: COMPLETE** — live
   eval passes 10/10 against OpenAI `gpt-4.1-mini`. **Phase 5 — UI: COMPLETE.**
-- **Phase 6 — ship to Vercel: COMPLETE & LIVE.** https://app-theta-roan-41.vercel.app — native
+- **Phase 6 — ship to Vercel: COMPLETE & LIVE.** https://fatsecret-semantic-layer.vercel.app — native
   DuckDB + frozen Parquet verified working in serverless; full loop (OpenAI selection → governed
   query → provenance) and graceful refusal verified live in production. Env: `LLM_PROVIDER`,
   `OPENAI_MODEL`, `OPENAI_API_KEY` set in Vercel. Deployed via `vercel deploy --prod` (remote build
@@ -171,8 +171,6 @@ cd .. && .venv/Scripts/python freeze/export_parquet.py
 
 ## 8. Open items
 
-- Make the pretty domain (`fatsecret-semantic-layer.vercel.app`) public: toggle off Vercel
-  Deployment Protection in project settings (the working public URL is the alias above).
 - Snowflake target: `pip install dbt-snowflake` + set `SF_*` env, then `dbt build --target snowflake`.
   The models are portable; the DuckDB path is already the source of truth.
 - Optional: refine two search terms so the whole slice is FatSecret "Generic" (currently a couple

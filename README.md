@@ -9,7 +9,7 @@ its provenance: which metric, its exact definition, the SQL that ran, and the so
 If the question can't be answered by a defined metric, the system **refuses** rather than
 guessing. Refusing to guess is the product.
 
-**▶ Live demo: https://app-theta-roan-41.vercel.app** — running on Vercel serverless over a
+**▶ Live demo: https://fatsecret-semantic-layer.vercel.app** — running on Vercel serverless over a
 real slice of FatSecret data: the LLM (OpenAI) selects a metric, a native DuckDB engine queries
 the frozen mart, every answer shows its provenance.
 
