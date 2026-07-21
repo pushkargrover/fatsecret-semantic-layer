@@ -10,6 +10,17 @@ const QuestionReq = z.object({ question: z.string().min(1).max(500) });
 const PickReq = z.object({ metric: z.string().min(1), food_id: z.number().int().positive() });
 const Body = z.union([QuestionReq, PickReq]);
 
+export function publicErrorFor(err: unknown): { error: string; status: number } {
+  const message = err instanceof Error ? err.message : "";
+  if (/API_KEY is not set/i.test(message)) {
+    return { error: "LLM provider is not configured.", status: 503 };
+  }
+  if (/OpenAI|Anthropic|LLM provider/i.test(message)) {
+    return { error: "LLM provider request failed.", status: 502 };
+  }
+  return { error: "Unexpected server error.", status: 500 };
+}
+
 export async function POST(request: Request): Promise<NextResponse> {
   let json: unknown;
   try {
@@ -30,7 +41,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         : await answerForFood(parsed.data.metric, parsed.data.food_id);
     return NextResponse.json(response);
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unexpected error.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    const { error, status } = publicErrorFor(err);
+    return NextResponse.json({ error }, { status });
   }
 }

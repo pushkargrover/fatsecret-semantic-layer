@@ -51,12 +51,12 @@ cd ..
 
 1. Get a Client ID / Secret at https://platform.fatsecret.com (Manage → Apps); allowlist your IP.
 2. `cp .env.example .env` and fill in `FATSECRET_CLIENT_ID` / `FATSECRET_CLIENT_SECRET`.
-3. `.venv/Scripts/python -m ingest.land_raw` — regenerates `seeds/raw_food_nutrition.csv`
+3. `.venv/Scripts/python -m ingest.land_raw` - regenerates `seeds/raw_food_nutrition.csv`
    from a curated set of search terms (raw JSON saved under `ingest/raw/`, gitignored). It also
-   writes a committed `ingest/ingest_manifest.csv` (search term → selected food id, name, type,
-   timestamp, raw-response SHA-256) as provenance for the pull. If fewer than `MIN_FOODS` resolve,
-   the seed is left unchanged and the script exits non-zero — a partial pull never overwrites a
-   good dataset.
+   writes a committed `ingest/ingest_manifest.csv` (search term, selected food id, name, type,
+   timestamp, raw-response SHA-256) as provenance for the pull. Every curated food must resolve
+   unless it is explicitly listed in `OPTIONAL_FOODS`; otherwise the seed is left unchanged and
+   the script exits non-zero. A partial pull never overwrites a good dataset.
 4. Re-run `dbt build` and the freeze step.
 
 ## Snowflake target (resume artifact)
@@ -67,5 +67,5 @@ The models are warehouse-portable; only the profile target changes.
 ## Legal
 
 Independent demo built on the public FatSecret Platform API. Not affiliated with or endorsed by
-FatSecret. Only a small curated sample is stored, in line with the API terms — raw pulls are
-gitignored and never redistributed.
+FatSecret. Only a small curated sample is stored for demo purposes; review the applicable API
+terms before redistributing any derived dataset. Raw pulls are gitignored and never redistributed.

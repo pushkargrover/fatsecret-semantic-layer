@@ -1,0 +1,48 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  app:
+    name: App
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: app/package-lock.json
+      - run: npm ci
+      - run: npm run codegen
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  pipeline:
+    name: Pipeline
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pipeline/requirements.txt
+      - name: Install pipeline dependencies
+        run: python -m pip install -r pipeline/requirements.txt
+      - name: Install dbt packages
+        working-directory: pipeline/dbt
+        run: dbt deps --profiles-dir .
+      - name: Build and test dbt project
+        working-directory: pipeline/dbt
+        run: dbt build --profiles-dir .
+      - name: Freeze governed mart
+        working-directory: pipeline
+        run: python -m freeze.export_parquet

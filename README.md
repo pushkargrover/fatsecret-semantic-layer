@@ -87,6 +87,11 @@ See [pipeline/README.md](pipeline/README.md) for live FatSecret ingest and the S
 
 ---
 
+## License
+
+All rights reserved. This repository is published as a portfolio/demo artifact; see [LICENSE](LICENSE).
+
 _Independent demo built on the public FatSecret Platform API. Not affiliated with or endorsed
-by FatSecret. Only a small slice (~20 foods) pulled from the API is cached, in line with the
-API terms; raw pulls are gitignored and never redistributed.
+by FatSecret. Only a small slice (~20 foods) pulled from the API is cached for demo purposes;
+raw pulls are gitignored and never redistributed. Review the applicable API terms before
+redistributing any derived dataset._
