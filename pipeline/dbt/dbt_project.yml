@@ -1,0 +1,29 @@
+name: "fatsecret"
+version: "1.0.0"
+config-version: 2
+
+profile: "fatsecret"
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+models:
+  fatsecret:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table
+      intermediate:
+        +materialized: view
+      rejects:
+        +materialized: view
+
+seeds:
+  fatsecret:
+    raw_food_nutrition:
+      +column_types:
+        food_id: integer

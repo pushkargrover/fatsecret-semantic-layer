@@ -1,0 +1,7 @@
+# Phase 1 (ingest) + Phase 2 (dbt on DuckDB).
+dbt-duckdb>=1.9,<2.0
+requests>=2.32
+python-dotenv>=1.0
+
+# Snowflake target (resume artifact). Uncomment + set env vars to build on Snowflake:
+# dbt-snowflake>=1.9,<2.0

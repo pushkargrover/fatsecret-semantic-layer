@@ -1,0 +1,60 @@
+# =============================================================================
+# METRIC REGISTRY — the governance contract.
+#
+# This file is the ONLY set of questions the system can answer. The LLM is shown
+# the `name` + `plain_english` of each metric and may select one; it never sees
+# this file's SQL and never emits SQL or ids. Application code maps the selected
+# metric to its governed, parameter-bound query (`sql_template`).
+#
+# Every metric has exactly one definition and one owner. To add an answerable
+# question you add an entry here (and its SQL) — deliberately high-friction.
+# =============================================================================
+
+- name: calories_per_100g
+  label: Calories per 100 g
+  plain_english: How many calories are in 100 grams of the food.
+  definition: Stated food energy in kilocalories per 100 g, as reported by the source.
+  entity: food
+  sql_template: sql/calories_per_100g.sql
+  allowed_filters:
+    - { name: food_id, type: id, required: true, resolves_via: dim_food }
+  measures:
+    - { column: calories_per_100g, label: Calories, unit: kcal/100g }
+  dimensions: []
+  source_models: [stg_fatsecret__foods, dim_food, fct_food_nutrition, mart_food_metrics]
+  owner: pushkar
+  version: 1
+
+- name: macro_split
+  label: Macro split
+  plain_english: The share of the food's energy that comes from protein, carbohydrate, and fat.
+  definition: >-
+    Each macronutrient's Atwater energy (protein 4, carbohydrate 4, fat 9 kcal/g)
+    expressed as a percentage of total macronutrient energy. The three shares sum to 100%.
+  entity: food
+  sql_template: sql/macro_split.sql
+  allowed_filters:
+    - { name: food_id, type: id, required: true, resolves_via: dim_food }
+  measures:
+    - { column: protein_pct_energy, label: Protein, unit: "% of energy" }
+    - { column: carb_pct_energy, label: Carbohydrate, unit: "% of energy" }
+    - { column: fat_pct_energy, label: Fat, unit: "% of energy" }
+  dimensions: []
+  source_models: [stg_fatsecret__foods, dim_food, fct_food_nutrition, mart_food_metrics]
+  owner: pushkar
+  version: 1
+
+- name: protein_density
+  label: Protein density
+  plain_english: Grams of protein per 100 kcal — how protein-rich the food is for its calories.
+  definition: protein_g_per_100g / energy_kcal_per_100g * 100, computed per food.
+  entity: food
+  sql_template: sql/protein_density.sql
+  allowed_filters:
+    - { name: food_id, type: id, required: true, resolves_via: dim_food }
+  measures:
+    - { column: protein_g_per_100kcal, label: Protein density, unit: g/100kcal }
+  dimensions: []
+  source_models: [stg_fatsecret__foods, dim_food, fct_food_nutrition, mart_food_metrics]
+  owner: pushkar
+  version: 1

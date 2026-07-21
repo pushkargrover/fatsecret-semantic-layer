@@ -1,0 +1,98 @@
+version: 2
+
+models:
+  - name: dim_food
+    description: Governed food dimension (name -> id) for deterministic entity resolution.
+    columns:
+      - name: food_id
+        description: Stable FatSecret food identifier. Primary key.
+        data_tests: [not_null, unique]
+      - name: food_name
+        description: Human-readable food name.
+        data_tests: [not_null]
+      - name: serving_note
+        description: Free-text description of the reference serving.
+
+  - name: fct_food_nutrition
+    description: "Per-food nutrition facts on a per-100g basis. Grain: one row per food."
+    columns:
+      - name: food_id
+        description: Food identifier. Primary key.
+        data_tests: [not_null, unique]
+      - name: energy_kcal_per_100g
+        description: Stated food energy (kcal per 100 g).
+        data_tests: [not_null]
+
+  - name: int_food_metrics
+    description: >
+      Intermediate: the three metrics plus the energy-reconciliation signal, for
+      every food (before quarantine). Not consumed directly by the app.
+    columns:
+      - name: food_id
+        description: Food identifier. Primary key.
+        data_tests: [not_null, unique]
+      - name: energy_reconciles
+        description: True when Atwater energy matches stated energy within tolerance.
+        data_tests: [not_null]
+
+  - name: mart_food_metrics
+    description: >
+      Governed metrics mart consumed by the semantic layer. One row per food,
+      restricted to foods whose macros reconcile to stated energy. Column names
+      match the registry's governed SQL. Frozen to Parquet for the app.
+    columns:
+      - name: food_id
+        description: Food identifier. Primary key.
+        data_tests: [not_null, unique]
+      - name: food_name
+        description: Human-readable food name.
+        data_tests: [not_null]
+      - name: calories_per_100g
+        description: "Metric: stated energy in kcal per 100 g."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0, max_value: 1000 }
+      - name: protein_pct_energy
+        description: "Metric (macro_split): protein as % of Atwater macro energy."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: carb_pct_energy
+        description: "Metric (macro_split): carbohydrate as % of Atwater macro energy."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: fat_pct_energy
+        description: "Metric (macro_split): fat as % of Atwater macro energy."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: protein_g_per_100kcal
+        description: "Metric: grams of protein per 100 kcal."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: energy_reconciles
+        description: Always true in the governed mart (non-reconciling foods are quarantined).
+        data_tests:
+          - accepted_values:
+              arguments: { values: [true] }
+    data_tests:
+      # The three macro shares must sum to 100% (definition of macro_split).
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "abs(protein_pct_energy + carb_pct_energy + fat_pct_energy - 100) < 0.001"
+
+  - name: rej_energy_reconciliation
+    description: >
+      Quarantined foods whose Atwater energy disagrees with stated energy beyond
+      tolerance. Excluded from the governed mart; kept for data-quality triage.
+    columns:
+      - name: food_id
+        description: Food identifier of the rejected row.
+        data_tests: [not_null]

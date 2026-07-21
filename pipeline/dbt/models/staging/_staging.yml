@@ -1,0 +1,40 @@
+version: 2
+
+models:
+  - name: stg_fatsecret__foods
+    description: >
+      Typed and cleaned foods from the raw FatSecret slice, normalised to a per-100g
+      basis. One row per food. This is the entry point for all downstream marts.
+    columns:
+      - name: food_id
+        description: Stable FatSecret food identifier. Primary key.
+        data_tests: [not_null, unique]
+      - name: food_name
+        description: Human-readable food name (used for entity resolution).
+        data_tests: [not_null]
+      - name: serving_note
+        description: Free-text description of the reference serving.
+      - name: energy_kcal_per_100g
+        description: Stated food energy in kilocalories per 100 g.
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0, max_value: 1000 }
+      - name: protein_g_per_100g
+        description: Grams of protein per 100 g.
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: carb_g_per_100g
+        description: Grams of carbohydrate per 100 g.
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0, max_value: 100 }
+      - name: fat_g_per_100g
+        description: Grams of fat per 100 g.
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments: { min_value: 0, max_value: 100 }

@@ -1,0 +1,10 @@
+{"question": "How many calories are in 100g of almonds?", "expected": "calories_per_100g"}
+{"question": "What is the energy content per 100 grams of white rice?", "expected": "calories_per_100g"}
+{"question": "What's the macro split of a boiled egg?", "expected": "macro_split"}
+{"question": "What percentage of salmon's calories come from fat?", "expected": "macro_split"}
+{"question": "How much protein per 100 calories does greek yogurt have?", "expected": "protein_density"}
+{"question": "How protein-dense is chicken breast?", "expected": "protein_density"}
+{"question": "Is olive oil keto-friendly?", "expected": "REFUSAL"}
+{"question": "Which is healthier, butter or margarine?", "expected": "REFUSAL"}
+{"question": "How much sodium is in cheddar cheese?", "expected": "REFUSAL"}
+{"question": "What's the glycemic index of a banana?", "expected": "REFUSAL"}
